@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections;
+
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+
 
 public class ArbolAVL {
     private NodoAVL raiz;
@@ -201,41 +202,7 @@ public class ArbolAVL {
         return tempNodoDer;
     }
 
-    public String inOrden()
-    {
-
-        inorden(raiz);
-        return this.rec;
-    }
-
-    public void inorden(NodoAVL aux)
-    {
-        if (aux != null)
-        {
-            inorden(aux.retornaLi());
-            rec = rec + Convert.ToString(aux.retornaDato());
-            inorden(aux.retornaLd());
-        }
-    }
-
-    public void preOrden(NodoAVL raiz)
-    {
-        if (raiz != null)
-        {
-            // print(" " + raiz.retornaDato() + " ");
-            preOrden(raiz.retornaLi());
-            preOrden(raiz.retornaLd());
-        }
-    }
-    public void posOrden(NodoAVL raiz)
-    {
-        if (raiz != null)
-        {
-            posOrden(raiz.retornaLi());
-            posOrden(raiz.retornaLd());
-            //print(" " + raiz.retornaDato() + " ");
-        }
-    }
+   
 
     private int altura(NodoAVL nodo)
     {
@@ -254,4 +221,135 @@ public class ArbolAVL {
         }
         return altura(nodo.retornaLi()) - altura(nodo.retornaLd());
     }
+
+    
+    public String inOrden(NodoAVL raiz) {
+        String linea = "";
+        if (raiz != null) {
+            linea += inOrden(raiz.retornaLi());
+            linea += " " + raiz.retornaDato() + " ";
+            linea += inOrden(raiz.retornaLd());
+        }
+        return linea;
+    }
+
+    public String preOrden(NodoAVL raiz) {
+        String linea = "";
+        if (raiz != null) {
+            linea += " " + raiz.retornaDato() + " ";
+            linea += preOrden(raiz.retornaLi());
+            linea += preOrden(raiz.retornaLd());
+        }
+        return linea;
+    }
+
+    public String posOrden(NodoAVL raiz) {
+        String linea = "";
+        if (raiz != null) {
+            linea += posOrden(raiz.retornaLi());
+            linea += posOrden(raiz.retornaLd());
+            linea += " " + raiz.retornaDato() + " ";
+        }
+        return linea;
+    }
+
+   
+
+    public int numeroRegistros() {
+        return numeroRegistros;
+    }
+
+    private int retornaBalance(NodoAVL nodo) {
+        if (nodo == null) {
+            return 0;
+        }
+        return altura(nodo.retornaLi()) - altura(nodo.retornaLd());
+    }
+
+    public String recorridoBFS(NodoAVL nodo) {
+        String linea = "";
+        Queue<NodoAVL> cola = new LinkedList();
+        cola.add(nodo);
+        while (!cola.isEmpty()) {
+            nodo = cola.remove();
+            linea += " " + nodo.retornaDato() + " ";
+            if (nodo.retornaLi() != null) {
+                cola.add(nodo.retornaLi());
+            }
+            if (nodo.retornaLd() != null) {
+                cola.add(nodo.retornaLd());
+            }
+
+        }
+        return linea;
+
+    }
+
+    public String recorridoDFS(NodoAVL nodo) {
+        String linea = "", lineaAux = "";
+
+        if (!(nodo.retornaLi() == null)) {
+
+            linea += " " + (nodo.retornaDato()) + " ";
+            lineaAux += recorridoDFS(nodo.retornaLi());
+        } else {
+
+            linea += " " + (nodo.retornaDato()) + " ";
+
+        }
+
+        if (!(nodo.retornaLd() == null)) {
+            lineaAux += recorridoDFS(nodo.retornaLd());
+        }
+
+        return linea + lineaAux;
+
+    }
+
+    public void esLleno() {
+        if (numeroRegistros == (Math.pow(2, raiz.retornaAltura())) - 1) {
+            Console.WriteLine("Es lleno");
+        } else {
+            Console.WriteLine("No es lleno");
+        }
+    }
+
+    public boolean ancestros(NodoAVL nodo, Object dato, Stack pila) {
+
+        if (nodo.retornaDato() == dato) {
+            return true;
+        }
+
+        if (nodo.retornaLi() != null) {
+            if (ancestros(nodo.retornaLi(), dato, pila)) {
+                pila.add(nodo.retornaLi().retornaDato());
+                return true;
+            }
+        }
+
+        if (nodo.retornaLd() != null) {
+            if (ancestros(nodo.retornaLd(), dato, pila)) {
+                pila.add(nodo.retornaLd().retornaDato());
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+    public String ancestros(NodoAVL nodo, Object dato) {
+        String linea = "";
+        Stack<Object> pila = new Stack<Object>();
+        if (!ancestros(nodo, dato, pila)) {
+            return "No existe el registro";
+        }
+        pila.add(nodo.retornaDato());
+        while (!pila.isEmpty()) {
+            linea += " " + pila.pop() + " ";
+        }
+        return linea;
+    }
+
+    
 }
